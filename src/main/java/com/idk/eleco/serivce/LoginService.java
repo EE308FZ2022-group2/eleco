@@ -44,7 +44,7 @@ public class LoginService {
                 .UserName(username)
                 .UserEmail(useremail)
                 .Password(password)
-                .UserJoinTime(new Date().toString())
+                .UserJoinTime(new Date())
                 .build();
         userMapper.insert(addUser);
         return new ResponseResult(200,"注册成功",addUser);

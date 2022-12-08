@@ -11,16 +11,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
-@TableName("user")
+@TableName("users")
 public class User {
 
     //用户ID,雪花算法，自增ID
-    @TableId(value = "userid", type = IdType.ASSIGN_ID)
+    @TableId(value = "userId", type = IdType.ASSIGN_ID)
     private String UserId;
 
     //用户名
@@ -47,27 +49,34 @@ public class User {
     private int follower = 0;
 
     //ip地址
-    @TableField("iplocation")
+    @TableField("ipLocation")
     private String IpLocation;
 
     //个人简介
     @Builder.Default
-    @TableField("userbrief")
-    private String UserBrief="这个人好懒，什么都没有简介";
+    @TableField("userBrief")
+    private String UserBrief="这个人好懒，什么简介都没写";
 
-    @TableField("usergender")
-    private String UserGender;
+    //性别
+    @Builder.Default
+    @TableField("userGender")
+    private String UserGender="未知";
 
     //邮箱
-    @TableField("useremail")
+    @TableField("userEmail")
     private String UserEmail;
 
     //github地址
-    @TableField("usergitaddress")
+    @TableField("userGitAddress")
     private String UserGitAddress;
 
     //创建时间
-    @TableField("userjointime")
-    private String UserJoinTime;
+    @TableField("userJoinTime")
+    private Date UserJoinTime;
+
+    //浏览量
+    @Builder.Default
+    @TableField("viewNum")
+    private int ViewNum=0;
 
 }
