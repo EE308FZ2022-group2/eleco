@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/user")
-@Api("用户功能")
+@Api("登陆注册功能")
 public class LoginController {
 
     @Resource
