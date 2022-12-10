@@ -3,13 +3,16 @@ package com.idk.eleco.serivce;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.idk.eleco.entity.User;
 import com.idk.eleco.mapper.UserMapper;
+import com.idk.eleco.util.IPUtil;
 import com.idk.eleco.util.ResponseResult;
 import com.sun.org.apache.xml.internal.resolver.helpers.PublicId;
+import net.dreamlu.mica.ip2region.core.Ip2regionSearcher;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 
 @Service
@@ -18,6 +21,9 @@ public class LoginService {
 
     @Resource
     UserMapper userMapper;
+
+    @Resource
+    Ip2regionSearcher ip2regionSearcher;
 
     public ResponseResult Login(String UserEmail ,String password){
 
@@ -33,17 +39,23 @@ public class LoginService {
     else return new ResponseResult(200,"邮箱不存在");
     }
 
-    public ResponseResult Register(String useremail ,String username,String password){
+    public ResponseResult Register(String useremail ,String username,String password) throws IOException {
         QueryWrapper<User> wrapper=new QueryWrapper<>();
         wrapper.eq("useremail",useremail);
         User user=userMapper.selectOne(wrapper);
         if (!ObjectUtils.isEmpty(user)){
             return new ResponseResult(409,"用户已存在");
         }
+
+        IPUtil ipUtil=new IPUtil();
+        String ip=ipUtil.getNowIP2();
+        String res=ip2regionSearcher.getAddress(ip);
+
         User addUser =User.builder()
                 .UserName(username)
                 .UserEmail(useremail)
                 .Password(password)
+                .IpLocation(res)
                 .UserJoinTime(new Date())
                 .build();
         userMapper.insert(addUser);

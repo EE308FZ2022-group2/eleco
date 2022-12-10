@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/user")
@@ -49,7 +50,7 @@ public class LoginController {
                                 @RequestParam("password") String password,
                                 @RequestParam("username") String username,
                                    HttpServletRequest request,
-                                HttpSession session) {
+                                HttpSession session) throws IOException {
 
 //        HttpUtils httpUtils=new HttpUtils();
 //        String ip = httpUtils.getIp(request);
