@@ -36,9 +36,7 @@ public class LoginController {
                                 @RequestParam("password") String password,
                                 HttpServletRequest request,
                                 HttpSession session) {
-//        IPUtil ipUtil=new IPUtil();
-//        String ip= ipUtil.getPublicIp();
-//        System.out.println(ip);
+
         return loginService.Login(useremail,password);
 
     }
@@ -52,8 +50,6 @@ public class LoginController {
                                    HttpServletRequest request,
                                 HttpSession session) throws IOException {
 
-//        HttpUtils httpUtils=new HttpUtils();
-//        String ip = httpUtils.getIp(request);
         return loginService.Register(email,username,password);
     }
 }
