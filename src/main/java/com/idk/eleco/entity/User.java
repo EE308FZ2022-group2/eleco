@@ -18,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
-@TableName("users")
+@TableName("user")
 public class User {
 
     //用户ID,雪花算法，自增ID

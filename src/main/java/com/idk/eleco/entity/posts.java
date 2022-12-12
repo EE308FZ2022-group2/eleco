@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
-@TableName("posts")
+@TableName("post")
 public class posts {
 
     //帖子ID

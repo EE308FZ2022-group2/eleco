@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
-@TableName("comments")
+@TableName("comment")
 public class comments {
 
     //评论ID
