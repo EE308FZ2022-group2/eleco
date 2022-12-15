@@ -1,4 +1,4 @@
-package com.idk.eleco.entity.Vo;
+package com.idk.eleco.model.Vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FollowVo {
+public class FollowVO {
 
     String followName;
 

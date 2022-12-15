@@ -1,4 +1,4 @@
-package com.idk.eleco.entity;
+package com.idk.eleco.model.entity;
 
 
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -16,7 +16,7 @@ import java.util.Date;
 @Builder
 @Accessors(chain = true)
 @TableName("comment")
-public class comments {
+public class Comment {
 
     //评论ID
     private String commentId;

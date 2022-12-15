@@ -1,4 +1,4 @@
-package com.idk.eleco.entity;
+package com.idk.eleco.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

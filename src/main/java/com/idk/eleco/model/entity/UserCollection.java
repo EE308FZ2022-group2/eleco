@@ -1,4 +1,4 @@
-package com.idk.eleco.entity;
+package com.idk.eleco.model.entity;
 
 
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 @TableName("user_collection")
-public class user_collection {
+public class UserCollection {
 
     //用户ID
     private String userId;

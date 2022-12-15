@@ -1,4 +1,4 @@
-package com.idk.eleco.entity;
+package com.idk.eleco.model.entity;
 
 
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -16,7 +16,7 @@ import java.util.Date;
 @Builder
 @Accessors(chain = true)
 @TableName("tag")
-public class tag {
+public class Tag {
 
     //子版块ID
     private String tagId;

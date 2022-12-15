@@ -1,7 +1,5 @@
-package com.idk.eleco.entity;
+package com.idk.eleco.model.Vo;
 
-
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
-@TableName("post")
-public class posts {
+public class PostVO {
 
     //帖子ID
     private String postId;
@@ -24,20 +21,11 @@ public class posts {
     //帖子标题
     private String postTitle;
 
-    //帖子所属子版块ID
-    private String posttagId;
-
-    //帖子简介
-    private String postBrief;
-
-    //帖子内容
-    private String postContect;
+    //帖子作者名
+    private String postAuthorName;
 
     //帖子创建时间
     private Date postTime;
-
-    //帖子收藏量
-    private int postCollection;
 
     //帖子修改时间
     private Date postModifyTime;
@@ -48,13 +36,12 @@ public class posts {
     //帖子是否加精华
     private Boolean isEssence;
 
-    //帖子是否置顶
-    private Boolean isTop;
-
     //帖子是否热门
     private Boolean isHot;
 
-    //帖子作者ID
-    private String postAuthorId;
+    //帖子所属子版块名
+    private String postTagName;
 
+    //帖子简介
+    private String postBrief;
 }

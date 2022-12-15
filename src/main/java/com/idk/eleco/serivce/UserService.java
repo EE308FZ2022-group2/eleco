@@ -2,9 +2,9 @@ package com.idk.eleco.serivce;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.idk.eleco.entity.User;
-import com.idk.eleco.entity.Vo.FollowVo;
-import com.idk.eleco.entity.user_follow;
+import com.idk.eleco.model.entity.User;
+import com.idk.eleco.model.Vo.FollowVO;
+import com.idk.eleco.model.entity.UserFollow;
 import com.idk.eleco.mapper.FollowMapper;
 import com.idk.eleco.mapper.UserMapper;
 import com.idk.eleco.util.ResponseResult;
@@ -47,16 +47,16 @@ public class UserService {
 
     public ResponseResult addFollow(String userId,String parentId){
 
-        QueryWrapper<user_follow> wrapper=new QueryWrapper<>();
+        QueryWrapper<UserFollow> wrapper=new QueryWrapper<>();
         wrapper.eq("userId",parentId).eq("followerId",userId);
-        user_follow userGet=followMapper.selectOne(wrapper);
+        UserFollow userGet=followMapper.selectOne(wrapper);
         if (!ObjectUtils.isEmpty(userGet)){
             return new ResponseResult(409,"已关注该用户");
         }
         if (parentId.equals(userId)){
             return new ResponseResult(200,"你不可以关注自己");
         }
-        user_follow user=user_follow.builder()
+        UserFollow user= UserFollow.builder()
                 .userId(parentId)
                 .followerId(userId)
                 .build();
@@ -75,14 +75,14 @@ public class UserService {
     }
 
     public ResponseResult DelFollow(String userId,String parentId){
-        QueryWrapper<user_follow> wrapper=new QueryWrapper<>();
+        QueryWrapper<UserFollow> wrapper=new QueryWrapper<>();
         wrapper.eq("userId",parentId).eq("followerId",userId);
-        user_follow userGet=followMapper.selectOne(wrapper);
+        UserFollow userGet=followMapper.selectOne(wrapper);
         if (ObjectUtils.isEmpty(userGet)){
             return new ResponseResult(409,"未关注");
         }
 
-        QueryWrapper<user_follow> qwrapper=new QueryWrapper<>();
+        QueryWrapper<UserFollow> qwrapper=new QueryWrapper<>();
         qwrapper.eq("userId",parentId).eq("followerId",userId);
         followMapper.delete(qwrapper);
 
@@ -98,23 +98,23 @@ public class UserService {
 
     //查找粉丝
     public ResponseResult UserFollower(String userId,Integer page,Integer size){
-        QueryWrapper<user_follow> wrapper=new QueryWrapper<>();
+        QueryWrapper<UserFollow> wrapper=new QueryWrapper<>();
         wrapper.eq("userId",userId);
-        List<user_follow> userGet=followMapper.selectList(wrapper);
+        List<UserFollow> userGet=followMapper.selectList(wrapper);
         if (ObjectUtils.isEmpty(userGet)){
             return new ResponseResult(409,"你没有粉丝");
         }
 
-        Page<user_follow> FollowPage=new Page<>(page,size);
-        QueryWrapper<user_follow> GetWrapper=new QueryWrapper<>();
+        Page<UserFollow> FollowPage=new Page<>(page,size);
+        QueryWrapper<UserFollow> GetWrapper=new QueryWrapper<>();
         GetWrapper.eq("userId",userId);
 
-        Page<user_follow> followPage=followMapper.selectPage(FollowPage,GetWrapper);
+        Page<UserFollow> followPage=followMapper.selectPage(FollowPage,GetWrapper);
         Map<String, Object> map = new HashMap<>(16);
-        FollowVo userArr[]=new FollowVo[new Long(followPage.getTotal()).intValue()>7?7:new Long(followPage.getTotal()).intValue()];
+        FollowVO userArr[]=new FollowVO[new Long(followPage.getTotal()).intValue()>7?7:new Long(followPage.getTotal()).intValue()];
         for (int i = 0; i < userGet.size(); i++) {
             User u=userMapper.selectById(userGet.get(i).getFollowerId());
-            FollowVo followVo= FollowVo.builder()
+            FollowVO followVo= FollowVO.builder()
                     .followName(u.getUserName())
                     .followBrief(u.getUserBrief())
                     .followAvatar(u.getAvatar())
@@ -132,22 +132,22 @@ public class UserService {
 
     //查找关注
     public ResponseResult UserFollow(String userId,Integer page,Integer size){
-        QueryWrapper<user_follow> wrapper=new QueryWrapper<>();
+        QueryWrapper<UserFollow> wrapper=new QueryWrapper<>();
         wrapper.eq("followerId",userId);
-        List<user_follow> userGet=followMapper.selectList(wrapper);
+        List<UserFollow> userGet=followMapper.selectList(wrapper);
         if (ObjectUtils.isEmpty(userGet)){
             return new ResponseResult(409,"你没有关注");
         }
 
-        Page<user_follow> FollowPage=new Page<>(page,size);
-        QueryWrapper<user_follow> GetWrapper=new QueryWrapper<>();
+        Page<UserFollow> FollowPage=new Page<>(page,size);
+        QueryWrapper<UserFollow> GetWrapper=new QueryWrapper<>();
         GetWrapper.eq("followerId",userId);
-        Page<user_follow> followPage=followMapper.selectPage(FollowPage,GetWrapper);
+        Page<UserFollow> followPage=followMapper.selectPage(FollowPage,GetWrapper);
         Map<String, Object> map = new HashMap<>(16);
-        FollowVo userArr[] =new FollowVo[new Long(followPage.getTotal()).intValue()>7?7:new Long(followPage.getTotal()).intValue()];
+        FollowVO userArr[] =new FollowVO[new Long(followPage.getTotal()).intValue()>7?7:new Long(followPage.getTotal()).intValue()];
         for (int i = 0; i < userGet.size(); i++) {
             User u=userMapper.selectById(userGet.get(i).getUserId());
-            FollowVo followVo= FollowVo.builder()
+            FollowVO followVo= FollowVO.builder()
                     .followName(u.getUserName())
                     .followBrief(u.getUserBrief())
                     .followAvatar(u.getAvatar())

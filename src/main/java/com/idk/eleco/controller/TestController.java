@@ -1,13 +1,11 @@
 package com.idk.eleco.controller;
 
-import com.idk.eleco.entity.User;
 import com.idk.eleco.util.IPUtil;
 import com.idk.eleco.util.ResponseResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.dreamlu.mica.ip2region.core.Ip2regionSearcher;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;

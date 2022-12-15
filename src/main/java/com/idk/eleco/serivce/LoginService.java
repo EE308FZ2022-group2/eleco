@@ -1,11 +1,10 @@
 package com.idk.eleco.serivce;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.idk.eleco.entity.User;
+import com.idk.eleco.model.entity.User;
 import com.idk.eleco.mapper.UserMapper;
 import com.idk.eleco.util.IPUtil;
 import com.idk.eleco.util.ResponseResult;
-import com.sun.org.apache.xml.internal.resolver.helpers.PublicId;
 import net.dreamlu.mica.ip2region.core.Ip2regionSearcher;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;

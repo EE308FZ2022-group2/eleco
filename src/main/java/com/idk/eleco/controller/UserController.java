@@ -1,7 +1,7 @@
 package com.idk.eleco.controller;
 
 
-import com.idk.eleco.entity.User;
+import com.idk.eleco.model.entity.User;
 import com.idk.eleco.serivce.UserService;
 import com.idk.eleco.util.ResponseResult;
 import io.swagger.annotations.Api;

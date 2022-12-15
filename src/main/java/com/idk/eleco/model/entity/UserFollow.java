@@ -1,4 +1,4 @@
-package com.idk.eleco.entity;
+package com.idk.eleco.model.entity;
 
 
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 @TableName("user_follow")
-public class user_follow {
+public class UserFollow {
 
     //用户ID
     @TableField("userId")
