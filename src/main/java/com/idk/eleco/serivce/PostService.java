@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,10 +78,13 @@ public class PostService {
         wrapper.eq("isHot", true);
         List<Post> post = postMapper.selectList(wrapper);
 
-        Map<String, Object> map = new HashMap<>();
         Integer showNum = 4;
+        Collections.shuffle(post);
+        List<Post> randomSeries = post.subList(0, showNum);
+
+        Map<String, Object> map = new HashMap<>();
         map.put("showNum", showNum);
-        map.put("resultArrList", post);
+        map.put("resultArrList", randomSeries);
 
         return new ResponseResult(200, "查询成功", map);
     }
