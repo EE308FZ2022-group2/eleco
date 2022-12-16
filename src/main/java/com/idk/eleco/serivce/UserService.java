@@ -2,6 +2,10 @@ package com.idk.eleco.serivce;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.idk.eleco.mapper.CollectionMapper;
+import com.idk.eleco.mapper.PostMapper;
+import com.idk.eleco.model.Vo.PostVO;
+import com.idk.eleco.model.entity.Post;
 import com.idk.eleco.model.entity.User;
 import com.idk.eleco.model.Vo.FollowVO;
 import com.idk.eleco.model.entity.UserCollection;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +33,12 @@ public class UserService {
 
     @Resource
     FollowMapper followMapper;
+
+    @Resource
+    PostMapper postMapper;
+
+    @Resource
+    CollectionMapper collectionMapper;
 
     public ResponseResult modifyUser(User user){
         userMapper.updateById(user);
@@ -168,5 +179,48 @@ public class UserService {
         map.put("totalPage",followPage.getPages());
 
         return new ResponseResult(200,"查询成功",map);
+    }
+
+    public ResponseResult collect(String userId, String postId) {
+        QueryWrapper<UserCollection> wrapper = new QueryWrapper<>();
+        wrapper.eq("userId", userId).eq("postId", postId);
+        UserCollection userCollection = collectionMapper.selectOne(wrapper);
+        if (!ObjectUtils.isEmpty(userCollection)) {
+            collectionMapper.delete(wrapper);
+            return new ResponseResult(200, "删除成功！");
+        } else {
+            UserCollection newUserCollection = UserCollection.builder()
+                    .userId(userId)
+                    .postId(postId)
+                    .build();
+            collectionMapper.insert(newUserCollection);
+            return new ResponseResult(200, "收藏成功！");
+        }
+    }
+
+    public ResponseResult getCollection(String userId, Integer nowPage) {
+        QueryWrapper<UserCollection> userCollectionQueryWrapper = new QueryWrapper<>();
+        userCollectionQueryWrapper.eq("userId", userId);
+        List<UserCollection> userCollections = collectionMapper.selectList(userCollectionQueryWrapper);
+        List<PostVO> postVOS = new ArrayList<>();
+        for (UserCollection userCollection : userCollections) {
+            QueryWrapper<Post> postQueryWrapper = new QueryWrapper<>();
+            postQueryWrapper.eq("postId", userCollection.getPostId());
+            Post post = postMapper.selectOne(postQueryWrapper);
+            PostVO postVO = PostVO.builder()
+                    .postId(post.getPostId())
+                    .postTitle(post.getPostTitle())
+                    .postAuthorName(post.getPostAuthorName())
+                    .postTime(post.getPostTime())
+                    .postModifyTime(post.getPostModifyTime())
+                    .postView(post.getPostView())
+                    .isEssence(post.getIsEssence())
+                    .isHot(post.getIsHot())
+                    .postTagName(post.getPostTagName())
+                    .postBrief(post.getPostBrief())
+                    .build();
+            postVOS.add(postVO);
+        }
+        return new ResponseResult(200, postVOS);
     }
 }

@@ -1,18 +1,22 @@
 package com.idk.eleco.serivce;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.idk.eleco.mapper.CollectionMapper;
 import com.idk.eleco.mapper.PostMapper;
 import com.idk.eleco.mapper.TagMapper;
 import com.idk.eleco.mapper.UserMapper;
+import com.idk.eleco.model.Vo.PostVO;
 import com.idk.eleco.model.Vo.TagVO;
 import com.idk.eleco.model.entity.Post;
 import com.idk.eleco.model.entity.Tag;
+import com.idk.eleco.model.entity.UserCollection;
 import com.idk.eleco.util.ResponseResult;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +33,9 @@ public class PostService {
 
     @Resource
     TagMapper tagMapper;
+
+    @Resource
+    CollectionMapper collectionMapper;
 
     //搜索
     public ResponseResult search(String content, Integer page, Integer size) {
