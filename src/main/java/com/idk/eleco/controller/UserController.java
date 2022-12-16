@@ -73,7 +73,7 @@ public class UserController {
     @ApiOperation("收藏帖子")
     @RequestMapping(value = "/collect", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseResult collect(@RequestParam("userId") String userId,
+    public ResponseResult<?> collect(@RequestParam("userId") String userId,
                                   @RequestParam("postId") String postId,
                                   HttpServletRequest request) {
         return userService.collect(userId, postId);
@@ -82,7 +82,7 @@ public class UserController {
     @ApiOperation("获取收藏的帖子")
     @RequestMapping(value = "/collection", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseResult getCollection(@RequestParam("userId") String userId,
+    public ResponseResult<?> getCollection(@RequestParam("userId") String userId,
                                         @RequestParam("nowPage") Integer nowPage,
                                         HttpServletRequest request) {
         return userService.getCollection(userId, nowPage);

@@ -181,24 +181,24 @@ public class UserService {
         return new ResponseResult(200,"查询成功",map);
     }
 
-    public ResponseResult collect(String userId, String postId) {
+    public ResponseResult<?> collect(String userId, String postId) {
         QueryWrapper<UserCollection> wrapper = new QueryWrapper<>();
         wrapper.eq("userId", userId).eq("postId", postId);
         UserCollection userCollection = collectionMapper.selectOne(wrapper);
         if (!ObjectUtils.isEmpty(userCollection)) {
             collectionMapper.delete(wrapper);
-            return new ResponseResult(200, "删除成功！");
+            return new ResponseResult<>(200, "删除成功！");
         } else {
             UserCollection newUserCollection = UserCollection.builder()
                     .userId(userId)
                     .postId(postId)
                     .build();
             collectionMapper.insert(newUserCollection);
-            return new ResponseResult(200, "收藏成功！");
+            return new ResponseResult<>(200, "收藏成功！");
         }
     }
 
-    public ResponseResult getCollection(String userId, Integer nowPage) {
+    public ResponseResult<?> getCollection(String userId, Integer nowPage) {
         QueryWrapper<UserCollection> userCollectionQueryWrapper = new QueryWrapper<>();
         userCollectionQueryWrapper.eq("userId", userId);
         List<UserCollection> userCollections = collectionMapper.selectList(userCollectionQueryWrapper);
@@ -221,6 +221,6 @@ public class UserService {
                     .build();
             postVOS.add(postVO);
         }
-        return new ResponseResult(200, postVOS);
+        return new ResponseResult<>(200, postVOS);
     }
 }
