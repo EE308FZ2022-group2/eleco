@@ -1,16 +1,12 @@
 package com.idk.eleco.serivce;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.idk.eleco.mapper.PostMapper;
 import com.idk.eleco.mapper.TagMapper;
 import com.idk.eleco.mapper.UserMapper;
-import com.idk.eleco.model.Vo.FollowVO;
-import com.idk.eleco.model.Vo.PostVO;
 import com.idk.eleco.model.Vo.TagVO;
 import com.idk.eleco.model.entity.Post;
 import com.idk.eleco.model.entity.Tag;
-import com.idk.eleco.model.entity.UserFollow;
 import com.idk.eleco.util.ResponseResult;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -71,6 +67,20 @@ public class PostService {
         Integer pageBegin = (page-1) * size;
         List<Post> resultArrList = postMapper.findData(pageBegin,size);
         map.put("resultArrList", resultArrList);
+
+        return new ResponseResult(200, "查询成功", map);
+    }
+
+    public ResponseResult recommend() {
+
+        QueryWrapper<Post> wrapper = new QueryWrapper<>();
+        wrapper.eq("isHot", true);
+        List<Post> post = postMapper.selectList(wrapper);
+
+        Map<String, Object> map = new HashMap<>();
+        Integer showNum = 4;
+        map.put("showNum", showNum);
+        map.put("resultArrList", post);
 
         return new ResponseResult(200, "查询成功", map);
     }

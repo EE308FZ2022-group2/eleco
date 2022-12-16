@@ -1,6 +1,7 @@
 package com.idk.eleco.model.entity;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +18,11 @@ import lombok.experimental.Accessors;
 public class UserCollection {
 
     //用户ID
+    @TableField("userId")
     private String userId;
 
     //帖子ID
+    @TableField("postId")
     private String postId;
 
 }
