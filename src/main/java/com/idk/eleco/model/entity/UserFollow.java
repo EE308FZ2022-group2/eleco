@@ -18,11 +18,11 @@ import lombok.experimental.Accessors;
 public class UserFollow {
 
     //用户ID
-    @TableField("userId")
+    @TableField("user_id")
     private String userId;
 
     //粉丝ID
-    @TableField("followerId")
+    @TableField("follower_id")
     private String followerId;
 
 }

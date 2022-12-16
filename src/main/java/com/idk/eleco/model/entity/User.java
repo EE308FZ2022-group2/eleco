@@ -22,7 +22,7 @@ import java.util.Date;
 public class User {
 
     //用户ID,雪花算法，自增ID
-    @TableId(value = "userId", type = IdType.ASSIGN_ID)
+    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
     private String UserId;
 
     //用户名

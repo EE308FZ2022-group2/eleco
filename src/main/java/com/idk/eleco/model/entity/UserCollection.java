@@ -18,11 +18,11 @@ import lombok.experimental.Accessors;
 public class UserCollection {
 
     //用户ID
-    @TableField("userId")
+    @TableField("user_id")
     private String userId;
 
     //帖子ID
-    @TableField("postId")
+    @TableField("post_id")
     private String postId;
 
 }
