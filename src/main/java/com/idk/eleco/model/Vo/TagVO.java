@@ -23,6 +23,9 @@ public class TagVO {
     //子版块默认图片
     private String tagImg;
 
+    //子版块简介
+    private String briefContent;
+
     //子版块帖子数量
     private int tagPostNum;
 

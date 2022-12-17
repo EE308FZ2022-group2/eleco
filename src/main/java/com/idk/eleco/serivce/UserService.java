@@ -242,6 +242,6 @@ public class UserService {
                 .showNum(pageSize)
                 .postArr(postVOS)
                 .build();
-        return new ResponseResult<>(200, collectionVO);
+        return new ResponseResult<>(200, "查询成功！", collectionVO);
     }
 }
