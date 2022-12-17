@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.idk.eleco.mapper.CollectionMapper;
 import com.idk.eleco.mapper.PostMapper;
+import com.idk.eleco.model.Vo.CollectionVO;
 import com.idk.eleco.model.Vo.PostVO;
 import com.idk.eleco.model.entity.Post;
 import com.idk.eleco.model.entity.User;
@@ -198,7 +199,7 @@ public class UserService {
         }
     }
 
-    public ResponseResult<?> getCollection(String userId, Integer nowPage) {
+    public ResponseResult<?> getCollection(String userId, int nowPage, int pageSize) {
         QueryWrapper<UserCollection> userCollectionQueryWrapper = new QueryWrapper<>();
         userCollectionQueryWrapper.eq("userId", userId);
         List<UserCollection> userCollections = collectionMapper.selectList(userCollectionQueryWrapper);
@@ -221,6 +222,26 @@ public class UserService {
                     .build();
             postVOS.add(postVO);
         }
-        return new ResponseResult<>(200, postVOS);
+        // 搜索结果总数
+        int totalNum = postVOS.size();
+
+        // 搜索总页数
+        int pageDiv = totalNum / pageSize;
+        int totalPages;
+        if (pageDiv == 0) {
+            totalPages = 1;
+        } else {
+            totalPages = pageDiv % pageSize == 0 ? pageDiv : pageDiv + 1;
+        }
+        int pageBegin = (nowPage - 1) * pageSize;
+        postVOS = nowPage == totalPages ? postVOS.subList(pageBegin, postVOS.size()) : postVOS.subList(pageBegin, pageBegin + pageSize + 1);
+        CollectionVO collectionVO = CollectionVO.builder()
+                .totalPage(totalPages)
+                .nowPage(nowPage)
+                .totalNum(totalNum)
+                .showNum(pageSize)
+                .postArr(postVOS)
+                .build();
+        return new ResponseResult<>(200, collectionVO);
     }
 }

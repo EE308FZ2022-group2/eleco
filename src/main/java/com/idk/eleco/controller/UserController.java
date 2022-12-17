@@ -83,9 +83,10 @@ public class UserController {
     @RequestMapping(value = "/collection", method = RequestMethod.GET)
     @ResponseBody
     public ResponseResult<?> getCollection(@RequestParam("userId") String userId,
-                                        @RequestParam("nowPage") Integer nowPage,
+                                        @RequestParam("nowPage") int nowPage,
+                                        @RequestParam("pageSize") int pageSize,
                                         HttpServletRequest request) {
-        return userService.getCollection(userId, nowPage);
+        return userService.getCollection(userId, nowPage, pageSize);
     }
 
 }
