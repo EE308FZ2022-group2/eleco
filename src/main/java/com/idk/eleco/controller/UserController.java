@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/user")
@@ -69,5 +70,23 @@ public class UserController {
         return userService.UserFollow(userId,page,size);
     }
 
+    @ApiOperation("收藏帖子")
+    @RequestMapping(value = "/collect", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseResult<?> collect(@RequestParam("userId") String userId,
+                                  @RequestParam("postId") String postId,
+                                  HttpServletRequest request) {
+        return userService.collect(userId, postId);
+    }
+
+    @ApiOperation("获取收藏的帖子")
+    @RequestMapping(value = "/collection", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseResult<?> getCollection(@RequestParam("userId") String userId,
+                                        @RequestParam("nowPage") int nowPage,
+                                        @RequestParam("pageSize") int pageSize,
+                                        HttpServletRequest request) {
+        return userService.getCollection(userId, nowPage, pageSize);
+    }
 
 }

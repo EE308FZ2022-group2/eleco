@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
-public class PostVO {
+public class RecommendPostVO {
 
     //帖子ID
     private String postId;
@@ -22,26 +22,32 @@ public class PostVO {
     private String postTitle;
 
     //帖子作者名
-    private String postAuthorName;
+    private String authorName;
 
     //帖子创建时间
     private Date postTime;
 
     //帖子修改时间
-    private Date postModifyTime;
+    private Date lastModifyTime;
 
     //帖子浏览量
-    private int postView;
+    private int viewNum;
 
     //帖子是否加精华
-    private Boolean isEssence;
+    private Boolean isEssPost;
 
     //帖子是否热门
-    private Boolean isHot;
+    private Boolean isHotPost;
 
     //帖子所属子版块名
-    private String postTagName;
+    private String relatedTagName;
+
+    //帖子所属子版块id
+    private String relatedTagId;
 
     //帖子简介
     private String postBrief;
+
+    //帖子图片数组
+    private String[] postImgUrl;
 }

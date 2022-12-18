@@ -2,8 +2,14 @@ package com.idk.eleco.serivce;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.idk.eleco.mapper.CollectionMapper;
+import com.idk.eleco.mapper.PostMapper;
+import com.idk.eleco.model.Vo.CollectionVO;
+import com.idk.eleco.model.Vo.SearchPostVO;
+import com.idk.eleco.model.entity.Post;
 import com.idk.eleco.model.entity.User;
 import com.idk.eleco.model.Vo.FollowVO;
+import com.idk.eleco.model.entity.UserCollection;
 import com.idk.eleco.model.entity.UserFollow;
 import com.idk.eleco.mapper.FollowMapper;
 import com.idk.eleco.mapper.UserMapper;
@@ -13,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +34,23 @@ public class UserService {
     @Resource
     FollowMapper followMapper;
 
+    @Resource
+    PostMapper postMapper;
+
+    @Resource
+    CollectionMapper collectionMapper;
+
     public ResponseResult modifyUser(User user){
         userMapper.updateById(user);
         QueryWrapper<User> wrapper=new QueryWrapper<>();
-        wrapper.eq("userId",user.getUserId());
+        wrapper.eq("user_id",user.getUserId());
         User NewUser=userMapper.selectOne(wrapper);
         return new ResponseResult(200,"修改成功",NewUser);
     }
 
     public ResponseResult FindUserByUd(String userId){
         QueryWrapper<User> wrapper=new QueryWrapper<>();
-        wrapper.eq("userId",userId);
+        wrapper.eq("user_id",userId);
         User user=userMapper.selectOne(wrapper);
         if (ObjectUtils.isEmpty(user)){
             return new ResponseResult(200,"查无此人");
@@ -48,7 +61,7 @@ public class UserService {
     public ResponseResult addFollow(String userId,String parentId){
 
         QueryWrapper<UserFollow> wrapper=new QueryWrapper<>();
-        wrapper.eq("userId",parentId).eq("followerId",userId);
+        wrapper.eq("user_id",parentId).eq("follower_id",userId);
         UserFollow userGet=followMapper.selectOne(wrapper);
         if (!ObjectUtils.isEmpty(userGet)){
             return new ResponseResult(409,"已关注该用户");
@@ -63,7 +76,7 @@ public class UserService {
         followMapper.insert(user);
 
         QueryWrapper<User> qw=new QueryWrapper<>();
-        qw.eq("userId",userId);
+        qw.eq("user_id",userId);
         User user1=userMapper.selectOne(qw);
         user1.setFollowing(user1.getFollowing()+1);
         userMapper.updateById(user1);
@@ -76,14 +89,14 @@ public class UserService {
 
     public ResponseResult DelFollow(String userId,String parentId){
         QueryWrapper<UserFollow> wrapper=new QueryWrapper<>();
-        wrapper.eq("userId",parentId).eq("followerId",userId);
+        wrapper.eq("user_id",parentId).eq("follower_id",userId);
         UserFollow userGet=followMapper.selectOne(wrapper);
         if (ObjectUtils.isEmpty(userGet)){
             return new ResponseResult(409,"未关注");
         }
 
         QueryWrapper<UserFollow> qwrapper=new QueryWrapper<>();
-        qwrapper.eq("userId",parentId).eq("followerId",userId);
+        qwrapper.eq("user_id",parentId).eq("follower_id",userId);
         followMapper.delete(qwrapper);
 
         User user=userMapper.selectById(userId);
@@ -99,7 +112,7 @@ public class UserService {
     //查找粉丝
     public ResponseResult UserFollower(String userId,Integer page,Integer size){
         QueryWrapper<UserFollow> wrapper=new QueryWrapper<>();
-        wrapper.eq("userId",userId);
+        wrapper.eq("user_id",userId);
         List<UserFollow> userGet=followMapper.selectList(wrapper);
         if (ObjectUtils.isEmpty(userGet)){
             return new ResponseResult(409,"你没有粉丝");
@@ -107,22 +120,24 @@ public class UserService {
 
         Page<UserFollow> FollowPage=new Page<>(page,size);
         QueryWrapper<UserFollow> GetWrapper=new QueryWrapper<>();
-        GetWrapper.eq("userId",userId);
+        GetWrapper.eq("user_id",userId);
 
         Page<UserFollow> followPage=followMapper.selectPage(FollowPage,GetWrapper);
         Map<String, Object> map = new HashMap<>(16);
-        FollowVO userArr[]=new FollowVO[new Long(followPage.getTotal()).intValue()>7?7:new Long(followPage.getTotal()).intValue()];
-        for (int i = 0; i < userGet.size(); i++) {
-            User u=userMapper.selectById(userGet.get(i).getFollowerId());
-            FollowVO followVo= FollowVO.builder()
-                    .followName(u.getUserName())
-                    .followBrief(u.getUserBrief())
+
+        List<UserFollow> list=followPage.getRecords();
+        FollowVO followVO[] =new FollowVO[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            User u=userMapper.selectById(list.get(i).getFollowerId());
+            FollowVO followVO1=FollowVO.builder()
                     .followAvatar(u.getAvatar())
+                    .followBrief(u.getUserBrief())
+                    .followName(u.getUserName())
                     .build();
-            userArr[i]=followVo;
-            //map.put(u.getUserId(),followVo);
+            followVO[i]=followVO1;
         }
-        map.put("followerObjArr",userArr);
+
+        map.put("followerObjArr",followVO);
         map.put("nowPage",followPage.getCurrent());
         map.put("showNum",followPage.getSize());
         map.put("totalNum",followPage.getTotal());
@@ -133,7 +148,7 @@ public class UserService {
     //查找关注
     public ResponseResult UserFollow(String userId,Integer page,Integer size){
         QueryWrapper<UserFollow> wrapper=new QueryWrapper<>();
-        wrapper.eq("followerId",userId);
+        wrapper.eq("follower_id",userId);
         List<UserFollow> userGet=followMapper.selectList(wrapper);
         if (ObjectUtils.isEmpty(userGet)){
             return new ResponseResult(409,"你没有关注");
@@ -141,12 +156,14 @@ public class UserService {
 
         Page<UserFollow> FollowPage=new Page<>(page,size);
         QueryWrapper<UserFollow> GetWrapper=new QueryWrapper<>();
-        GetWrapper.eq("followerId",userId);
+        GetWrapper.eq("follower_id",userId);
         Page<UserFollow> followPage=followMapper.selectPage(FollowPage,GetWrapper);
         Map<String, Object> map = new HashMap<>(16);
-        FollowVO userArr[] =new FollowVO[new Long(followPage.getTotal()).intValue()>7?7:new Long(followPage.getTotal()).intValue()];
-        for (int i = 0; i < userGet.size(); i++) {
-            User u=userMapper.selectById(userGet.get(i).getUserId());
+
+        List<UserFollow> list =followPage.getRecords();
+        FollowVO userArr[] =new FollowVO[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            User u=userMapper.selectById(list.get(i).getUserId());
             FollowVO followVo= FollowVO.builder()
                     .followName(u.getUserName())
                     .followBrief(u.getUserBrief())
@@ -162,5 +179,68 @@ public class UserService {
         map.put("totalPage",followPage.getPages());
 
         return new ResponseResult(200,"查询成功",map);
+    }
+
+    public ResponseResult<?> collect(String userId, String postId) {
+        QueryWrapper<UserCollection> wrapper = new QueryWrapper<>();
+        wrapper.eq("userId", userId).eq("postId", postId);
+        UserCollection userCollection = collectionMapper.selectOne(wrapper);
+        if (!ObjectUtils.isEmpty(userCollection)) {
+            collectionMapper.delete(wrapper);
+            return new ResponseResult<>(200, "删除成功！");
+        } else {
+            UserCollection newUserCollection = UserCollection.builder()
+                    .userId(userId)
+                    .postId(postId)
+                    .build();
+            collectionMapper.insert(newUserCollection);
+            return new ResponseResult<>(200, "收藏成功！");
+        }
+    }
+
+    public ResponseResult<?> getCollection(String userId, int nowPage, int pageSize) {
+        QueryWrapper<UserCollection> userCollectionQueryWrapper = new QueryWrapper<>();
+        userCollectionQueryWrapper.eq("userId", userId);
+        List<UserCollection> userCollections = collectionMapper.selectList(userCollectionQueryWrapper);
+        List<SearchPostVO> searchPostVOS = new ArrayList<>();
+        for (UserCollection userCollection : userCollections) {
+            QueryWrapper<Post> postQueryWrapper = new QueryWrapper<>();
+            postQueryWrapper.eq("postId", userCollection.getPostId());
+            Post post = postMapper.selectOne(postQueryWrapper);
+            SearchPostVO searchPostVO = SearchPostVO.builder()
+                    .postId(post.getPostId())
+                    .isEssPost(post.getIsEssence())
+                    .isHotPost(post.getIsHot())
+                    .postBrief(post.getPostBrief())
+                    .postTime(post.getPostTime())
+                    .postTitle(post.getPostTitle())
+                    .authorName(post.getPostAuthorName())
+                    .lastModifyTime(post.getPostModifyTime())
+                    .relatedTagName(post.getPostTagName())
+                    .viewNum(post.getPostView())
+                    .build();
+            searchPostVOS.add(searchPostVO);
+        }
+        // 搜索结果总数
+        int totalNum = searchPostVOS.size();
+
+        // 搜索总页数
+        int pageDiv = totalNum / pageSize;
+        int totalPages;
+        if (pageDiv == 0) {
+            totalPages = 1;
+        } else {
+            totalPages = pageDiv % pageSize == 0 ? pageDiv : pageDiv + 1;
+        }
+        int pageBegin = (nowPage - 1) * pageSize;
+        searchPostVOS = nowPage == totalPages ? searchPostVOS.subList(pageBegin, searchPostVOS.size()) : searchPostVOS.subList(pageBegin, pageBegin + pageSize + 1);
+        CollectionVO collectionVO = CollectionVO.builder()
+                .totalPage(totalPages)
+                .nowPage(nowPage)
+                .totalNum(totalNum)
+                .showNum(pageSize)
+                .postArr(searchPostVOS)
+                .build();
+        return new ResponseResult<>(200, "查询成功！", collectionVO);
     }
 }
