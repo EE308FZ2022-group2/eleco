@@ -190,17 +190,20 @@ public class PostService {
         QueryWrapper<Tag> wrapper = new QueryWrapper<>();
         wrapper.eq("tagTitle", tags);
         Tag Tag = tagMapper.selectOne(wrapper);
+        String tagId = Tag.getTagId();
         if (ObjectUtils.isEmpty(Tag)) {
             Tag tag = Tag.builder()
                     .tagTitle(title)
                     .build();
             tagMapper.insert(tag);
+            tagId = tag.getTagId();
         }
 
         Post post = Post.builder()
                 .postAuthorId(userId)
                 .postTagName(tags)
                 .postTitle(title)
+                .postTagId(tagId)
                 .postContentHtml(contentHtml)
                 .postContentMark(contentMark)
                 .imgUrlArr(imgUrl)
