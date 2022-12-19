@@ -22,7 +22,7 @@ public class SearchController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ResponseBody
     public ResponseResult search(@RequestParam("content") String content,
-                                 @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                 @RequestParam(value = "nowPage", defaultValue = "1") Integer page,
                                  @RequestParam(value = "size", defaultValue = "7") Integer size){
 
         return postService.search(content,page,size);

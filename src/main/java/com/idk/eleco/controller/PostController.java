@@ -53,6 +53,15 @@ public class PostController {
         return postService.info(postId);
     }
 
+    @ApiOperation("通过id获得帖子评论")
+    @RequestMapping(value = "/comment", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseResult comment(@RequestParam("postId") String postId,
+                               @RequestParam("nowPage") Integer nowPage,
+                               @RequestParam("size") Integer size) {
+        return postService.comment(postId,nowPage,size);
+    }
+
     @ApiOperation("更新帖子")
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
     @ResponseBody

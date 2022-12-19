@@ -1,13 +1,12 @@
 package com.idk.eleco.serivce;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.idk.eleco.mapper.CollectionMapper;
-import com.idk.eleco.mapper.PostMapper;
-import com.idk.eleco.mapper.TagMapper;
-import com.idk.eleco.mapper.UserMapper;
+import com.idk.eleco.mapper.*;
+import com.idk.eleco.model.Vo.CommentVO;
 import com.idk.eleco.model.Vo.RecommendPostVO;
 import com.idk.eleco.model.Vo.SearchPostVO;
 import com.idk.eleco.model.Vo.TagVO;
+import com.idk.eleco.model.entity.Comment;
 import com.idk.eleco.model.entity.Post;
 import com.idk.eleco.model.entity.Tag;
 import com.idk.eleco.model.entity.User;
@@ -36,6 +35,9 @@ public class PostService {
     TagMapper tagMapper;
 
     @Resource
+    CommentMapper commentMapper;
+
+    @Resource
     CollectionMapper collectionMapper;
 
     //搜索
@@ -62,7 +64,7 @@ public class PostService {
             map.put("tagsObj", tagVO);
         }
         //搜索结果总数
-        int totalNum = postMapper.findSize();
+        int totalNum = postMapper.findSize(content);
         //搜索结果总页数
         Integer div = totalNum / size;
         Integer totalPage = totalNum % size == 0 ? div : div + 1;
@@ -72,7 +74,7 @@ public class PostService {
         map.put("nowPage", page);
 
         Integer pageBegin = (page - 1) * size;
-        List<Post> post = postMapper.findData(pageBegin, size);
+        List<Post> post = postMapper.findData(pageBegin, size, content);
 
         map.put("showNum", post.size());
 
@@ -241,9 +243,59 @@ public class PostService {
         return new ResponseResult(200, "查询成功", postObj);
     }
 
+    public ResponseResult comment(String commentPostId, Integer page, Integer size) {
+
+        Map<String, Object> map = new HashMap<>();
+
+        //搜索结果总数
+        int totalNum = commentMapper.findSize(commentPostId);
+        //搜索结果总页数
+        Integer div = totalNum / size;
+        Integer totalPage = totalNum % size == 0 ? div : div + 1;
+
+        map.put("totalNum", totalNum);
+        map.put("totalPage", totalPage);
+        map.put("nowPage", page);
+
+        Integer pageBegin = (page - 1) * size;
+        List<Comment> comment = commentMapper.findData(pageBegin, size, commentPostId);
+
+        map.put("showNum", comment.size());
+
+        CommentVO[] resultArrList = new CommentVO[comment.size() > size ? size : comment.size()];
+        for (int i = 0; i < resultArrList.length; i++) {
+
+            QueryWrapper<User> wrapper = new QueryWrapper<>();
+            wrapper.eq("username", comment.get(i).getCommentUserName());
+            User user = userMapper.selectOne(wrapper);
+
+            CommentVO commentVO = CommentVO.builder()
+                    .commentFlour(comment.get(i).getCommentFlour())
+                    .commentId(comment.get(i).getCommentId())
+                    .commentTime(comment.get(i).getCommentTime())
+                    .commentUserName(comment.get(i).getCommentUserName())
+                    .postComment(comment.get(i).getPostComment())
+                    .quoteComment(comment.get(i).getQuoteComment())
+                    .quoteCommentTime(comment.get(i).getQuoteCommentTime())
+                    .avatar(user.getAvatar())
+                    .isQuote(comment.get(i).getIsQuote())
+                    .quoteUserName(comment.get(i).getQuoteUserName())
+                    .quoteFlour(comment.get(i).getQuoteFlour())
+                    .quoteUserId(comment.get(i).getQuoteUserId())
+                    .build();
+            resultArrList[i] = commentVO;
+        }
+
+
+        map.put("resultArrList", resultArrList);
+
+        return new ResponseResult(200, "查询成功", map);
+
+    }
+
 
     public ResponseResult update(String postId, String userId, String tags, String title,
-                                 String contentHtml, String contentMark, String[] imgUrlArr,String postBrief) {
+                                 String contentHtml, String contentMark, String[] imgUrlArr, String postBrief) {
 
         String imgUrl = "";
         for (int i = 0; i < imgUrlArr.length - 1; i++) {
@@ -263,7 +315,7 @@ public class PostService {
         post.setImgUrlArr(imgUrl);
         post.setPostBrief(postBrief);
 
-        postMapper.update(post,qw);
+        postMapper.update(post, qw);
 
         return new ResponseResult(200, "更新帖子成功");
     }

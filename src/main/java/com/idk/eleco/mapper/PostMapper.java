@@ -13,10 +13,10 @@ import java.util.List;
 @Repository
 public interface PostMapper extends BaseMapper<Post> {
 
-        @Select("select * from post limit #{pageBegin}, #{pageSize}")
-        List<Post> findData(@Param("pageBegin") Integer pageBegin, @Param("pageSize") Integer pageSize);
+        @Select("select * from post where postTitle like concat('%',#{postTitle},'%') limit #{pageBegin}, #{pageSize}")
+        List<Post> findData(@Param("pageBegin") Integer pageBegin, @Param("pageSize") Integer pageSize ,@Param("postTitle") String postTitle);
 
-        @Select("select count(*) from post")
-        int findSize();
+        @Select("select count(*) from post where postTitle like concat('%',#{postTitle},'%')")
+        int findSize(String postTitle);
 
 }
