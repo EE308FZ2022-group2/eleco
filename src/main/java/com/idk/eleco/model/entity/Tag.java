@@ -1,10 +1,7 @@
 package com.idk.eleco.model.entity;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,14 +32,16 @@ public class Tag {
 
     //子版块帖子数量
     @TableField("tagPostNum")
-    private int tagPostNum;
+    @Builder.Default
+    private int tagPostNum =0;
 
     //子版块热度
     @TableField("tagHot")
-    private int tagHot;
+    @Builder.Default
+    private int tagHot =0;
 
     //子版块帖子最后提交时间
-    @TableField("tagHot")
+    @TableField(value = "lastPostTime", fill = FieldFill.UPDATE)
     private Date lastPostTime;
 
     //子版块简介

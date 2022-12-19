@@ -1,10 +1,7 @@
 package com.idk.eleco.model.entity;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -54,32 +51,37 @@ public class Post {
     private String imgUrlArr;
 
     //帖子创建时间
-    @TableField("postTime")
+    @TableField(value = "postTime", fill = FieldFill.INSERT)
     private Date postTime;
 
     //帖子收藏量
     @TableField("postCollection")
-    private int postCollection;
+    @Builder.Default
+    private int postCollection = 0;
 
     //帖子修改时间
-    @TableField("postModifyTime")
+    @TableField(value = "postModifyTime", fill = FieldFill.UPDATE)
     private Date postModifyTime;
 
     //帖子浏览量
     @TableField("postView")
-    private int postView;
+    @Builder.Default
+    private int postView = 0;
 
     //帖子是否加精华
     @TableField("isEssence")
-    private Boolean isEssence;
+    @Builder.Default
+    private Boolean isEssence= false;
 
     //帖子是否置顶
     @TableField("isTop")
-    private Boolean isTop;
+    @Builder.Default
+    private Boolean isTop = false;
 
     //帖子是否热门
     @TableField("isHot")
-    private Boolean isHot;
+    @Builder.Default
+    private Boolean isHot = false;
 
     //帖子作者ID
     @TableField("postAuthorId")

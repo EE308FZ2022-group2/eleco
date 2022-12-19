@@ -10,6 +10,7 @@ import com.idk.eleco.model.Vo.SearchPostVO;
 import com.idk.eleco.model.Vo.TagVO;
 import com.idk.eleco.model.entity.Post;
 import com.idk.eleco.model.entity.Tag;
+import com.idk.eleco.model.entity.User;
 import com.idk.eleco.util.ResponseResult;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -135,4 +136,143 @@ public class PostService {
 
         return new ResponseResult(200, "查询成功", map);
     }
+
+    public ResponseResult relate() {
+
+        QueryWrapper<Post> wrapper = new QueryWrapper<>();
+        List<Post> post = postMapper.selectList(wrapper);
+
+        Integer showNum = 7;
+        Collections.shuffle(post);
+        List<Post> randomSeries = post.subList(0, showNum);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("showNum", showNum);
+
+        RecommendPostVO[] resultArrList = new RecommendPostVO[showNum];
+        for (int i = 0; i < showNum; i++) {
+            RecommendPostVO recommendPostVO = RecommendPostVO.builder()
+                    .postId(randomSeries.get(i).getPostId())
+                    .isEssPost(randomSeries.get(i).getIsEssence())
+                    .isHotPost(randomSeries.get(i).getIsHot())
+                    .postBrief(randomSeries.get(i).getPostBrief())
+                    .postTime(randomSeries.get(i).getPostTime())
+                    .postTitle(randomSeries.get(i).getPostTitle())
+                    .authorName(randomSeries.get(i).getPostAuthorName())
+                    .lastModifyTime(randomSeries.get(i).getPostModifyTime())
+                    .relatedTagName(randomSeries.get(i).getPostTagName())
+                    .viewNum(randomSeries.get(i).getPostView())
+                    .postImgUrl(randomSeries.get(i).getImgUrlArr().split(" "))
+                    .relatedTagId(randomSeries.get(i).getPostTagId())
+                    .build();
+            resultArrList[i] = recommendPostVO;
+        }
+
+        map.put("resultArrList", randomSeries);
+
+        return new ResponseResult(200, "查询成功", map);
+    }
+
+    public ResponseResult create(String userId, String tags, String title, String contentHtml,
+                                 String contentMark, String[] imgUrlArr, String postBrief) {
+
+        String imgUrl = "";
+        for (int i = 0; i < imgUrlArr.length - 1; i++) {
+            imgUrl = imgUrl + imgUrlArr[i] + " ";
+        }
+        imgUrl = imgUrl + imgUrlArr[imgUrlArr.length - 1];
+
+        QueryWrapper<User> qw = new QueryWrapper<>();
+        qw.eq("user_id", userId);
+        User user = userMapper.selectOne(qw);
+
+        //没有标题会创建标题
+        QueryWrapper<Tag> wrapper = new QueryWrapper<>();
+        wrapper.eq("tagTitle", tags);
+        Tag Tag = tagMapper.selectOne(wrapper);
+        if (ObjectUtils.isEmpty(Tag)) {
+            Tag tag = Tag.builder()
+                    .tagTitle(title)
+                    .build();
+            tagMapper.insert(tag);
+        }
+
+        Post post = Post.builder()
+                .postAuthorId(userId)
+                .postTagName(tags)
+                .postTitle(title)
+                .postContentHtml(contentHtml)
+                .postContentMark(contentMark)
+                .imgUrlArr(imgUrl)
+                .postBrief(postBrief)
+                .postAuthorName(user.getUserName())
+                .build();
+        postMapper.insert(post);
+
+        return new ResponseResult(200, "发布帖子成功");
+    }
+
+
+    public ResponseResult info(String PostId) {
+
+        QueryWrapper<Post> wrapper = new QueryWrapper<>();
+        wrapper.eq("postId", PostId);
+        Post post = postMapper.selectOne(wrapper);
+
+
+        RecommendPostVO postObj = RecommendPostVO.builder()
+                .postId(post.getPostId())
+                .isEssPost(post.getIsEssence())
+                .isHotPost(post.getIsHot())
+                .postBrief(post.getPostBrief())
+                .postTime(post.getPostTime())
+                .postTitle(post.getPostTitle())
+                .authorName(post.getPostAuthorName())
+                .lastModifyTime(post.getPostModifyTime())
+                .relatedTagName(post.getPostTagName())
+                .viewNum(post.getPostView())
+                .postImgUrl(post.getImgUrlArr().split(" "))
+                .relatedTagId(post.getPostTagId())
+                .build();
+
+        return new ResponseResult(200, "查询成功", postObj);
+    }
+
+
+    public ResponseResult update(String postId, String userId, String tags, String title,
+                                 String contentHtml, String contentMark, String[] imgUrlArr,String postBrief) {
+
+        String imgUrl = "";
+        for (int i = 0; i < imgUrlArr.length - 1; i++) {
+            imgUrl = imgUrl + imgUrlArr[i] + " ";
+        }
+        imgUrl = imgUrl + imgUrlArr[imgUrlArr.length - 1];
+
+        QueryWrapper<Post> qw = new QueryWrapper<>();
+        qw.eq("postId", postId);
+        Post post = postMapper.selectOne(qw);
+
+        post.setPostAuthorId(userId);
+        post.setPostTagName(tags);
+        post.setPostTitle(title);
+        post.setPostContentHtml(contentHtml);
+        post.setPostContentMark(contentMark);
+        post.setImgUrlArr(imgUrl);
+        post.setPostBrief(postBrief);
+
+        postMapper.update(post,qw);
+
+        return new ResponseResult(200, "更新帖子成功");
+    }
+
+    public ResponseResult delete(String postId) {
+
+        QueryWrapper<Post> qw = new QueryWrapper<>();
+        qw.eq("postId", postId);
+
+        postMapper.delete(qw);
+
+        return new ResponseResult(200, "删除帖子成功");
+    }
+
 }
