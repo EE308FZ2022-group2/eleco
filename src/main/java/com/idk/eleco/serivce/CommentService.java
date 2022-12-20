@@ -59,6 +59,7 @@ public class CommentService {
                     .quoteUserName(quoteComment.getCommentUserName())
                     .quoteUserId(quoteComment.getCommentUserId())
                     .quoteComment(quoteComment.getPostComment())
+                    .quoteCommentTime(quoteComment.getCommentTime())
                     .commentTime(new Date())
                     .build();
             commentMapper.insert(comment);
