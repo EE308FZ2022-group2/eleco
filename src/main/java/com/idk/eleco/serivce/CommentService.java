@@ -29,30 +29,38 @@ public class CommentService {
             // 无父评论
             QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
             userQueryWrapper.eq("user_id", userId);
-            String username = userMapper.selectOne(userQueryWrapper).getUserName();
+            User user = userMapper.selectOne(userQueryWrapper);
+            if (ObjectUtils.isEmpty(user)) {
+                return new ResponseResult<>(400, "用户不存在");
+            }
             Comment comment = Comment.builder()
                     .commentPostId(postId)
                     .commentUserId(userId)
-                    .commentUserName(username)
+                    .commentUserName(user.getUserName())
                     .postComment(postComment)
                     .commentFlour(commentFlour)
                     .isQuote(false)
                     .commentTime(new Date())
                     .build();
             commentMapper.insert(comment);
-            return new ResponseResult<>(200, "发表成功");
         } else {
             // 有父评论
             QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
             commentQueryWrapper.eq("commentId", quoteCommentId);
             Comment quoteComment = commentMapper.selectOne(commentQueryWrapper);
+            if (ObjectUtils.isEmpty(quoteComment)) {
+                return new ResponseResult<>(400, "未找到父评论");
+            }
             QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
             userQueryWrapper.eq("user_id", userId);
-            String username = userMapper.selectOne(userQueryWrapper).getUserName();
+            User user = userMapper.selectOne(userQueryWrapper);
+            if (ObjectUtils.isEmpty(user)) {
+                return new ResponseResult<>(400, "用户不存在");
+            }
             Comment comment = Comment.builder()
                     .commentPostId(postId)
                     .commentUserId(userId)
-                    .commentUserName(username)
+                    .commentUserName(user.getUserName())
                     .postComment(postComment)
                     .isQuote(true)
                     .quoteFlour(quoteFlour)
@@ -63,7 +71,7 @@ public class CommentService {
                     .commentTime(new Date())
                     .build();
             commentMapper.insert(comment);
-            return new ResponseResult<>(200, "发表成功");
         }
+        return new ResponseResult<>(200, "发表成功");
     }
 }
