@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 @Api("用户功能")
 public class UserController {
 
+    static Integer PageSize=7;
     @Resource
     UserService userService;
 
@@ -54,20 +55,26 @@ public class UserController {
     @RequestMapping(value = "/GetFollower", method = RequestMethod.POST)
     @ResponseBody
     public ResponseResult FindFollower(@RequestParam("userId") String userId,
-                                     @RequestParam(value = "page", defaultValue = "1") Integer page,
-                                     @RequestParam(value = "size", defaultValue = "7") Integer size){
+                                     @RequestParam(value = "needPage", defaultValue = "1") Integer page){
 
-        return userService.UserFollower(userId,page,size);
+        return userService.UserFollower(userId,page,PageSize);
     }
 
     @ApiOperation("查看关注")
     @RequestMapping(value = "/GetFollow", method = RequestMethod.POST)
     @ResponseBody
     public ResponseResult FindFollow(@RequestParam("userId") String userId,
-                                     @RequestParam(value = "page", defaultValue = "1") Integer page,
-                                     @RequestParam(value = "size", defaultValue = "7") Integer size){
+                                     @RequestParam(value = "needPage", defaultValue = "1") Integer page){
 
-        return userService.UserFollow(userId,page,size);
+        return userService.UserFollow(userId,page,PageSize);
+    }
+    @ApiOperation("查询用户所有帖子")
+    @RequestMapping(value = "/GetAllPost", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseResult GetAllPost(@RequestParam("userId") String userId,
+                                     @RequestParam(value = "needPage", defaultValue = "1") Integer page){
+
+        return userService.getPost(userId,page,PageSize);
     }
 
     @ApiOperation("收藏帖子")
@@ -83,10 +90,11 @@ public class UserController {
     @RequestMapping(value = "/collection", method = RequestMethod.GET)
     @ResponseBody
     public ResponseResult<?> getCollection(@RequestParam("userId") String userId,
-                                        @RequestParam("nowPage") int nowPage,
-                                        @RequestParam("pageSize") int pageSize,
+                                        @RequestParam(value = "needPage", defaultValue = "1") int nowPage,
                                         HttpServletRequest request) {
-        return userService.getCollection(userId, nowPage, pageSize);
+        return userService.getCollection(userId, nowPage, PageSize);
     }
+
+
 
 }

@@ -11,14 +11,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FollowVO {
 
+    String followId;
     String followName;
 
     String followAvatar;
 
     String followBrief;
-
-
-
 
 
 }

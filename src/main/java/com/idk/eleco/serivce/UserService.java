@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.idk.eleco.mapper.CollectionMapper;
 import com.idk.eleco.mapper.PostMapper;
 import com.idk.eleco.model.Vo.CollectionVO;
+import com.idk.eleco.model.Vo.PostVO;
 import com.idk.eleco.model.Vo.SearchPostVO;
 import com.idk.eleco.model.entity.Post;
 import com.idk.eleco.model.entity.User;
@@ -130,6 +131,7 @@ public class UserService {
         for (int i = 0; i < list.size(); i++) {
             User u=userMapper.selectById(list.get(i).getFollowerId());
             FollowVO followVO1=FollowVO.builder()
+                    .followId(u.getUserId())
                     .followAvatar(u.getAvatar())
                     .followBrief(u.getUserBrief())
                     .followName(u.getUserName())
@@ -137,11 +139,11 @@ public class UserService {
             followVO[i]=followVO1;
         }
 
-        map.put("followerObjArr",followVO);
-        map.put("nowPage",followPage.getCurrent());
-        map.put("showNum",followPage.getSize());
         map.put("totalNum",followPage.getTotal());
         map.put("totalPage",followPage.getPages());
+        map.put("nowPage",followPage.getCurrent());
+        map.put("showNum",followPage.getSize());
+        map.put("followerObjArr",followVO);
         return new ResponseResult(200,"查询成功",map);
     }
 
@@ -165,6 +167,7 @@ public class UserService {
         for (int i = 0; i < list.size(); i++) {
             User u=userMapper.selectById(list.get(i).getUserId());
             FollowVO followVo= FollowVO.builder()
+                    .followId(u.getUserId())
                     .followName(u.getUserName())
                     .followBrief(u.getUserBrief())
                     .followAvatar(u.getAvatar())
@@ -172,18 +175,61 @@ public class UserService {
             userArr[i]=followVo;
             //map.put(u.getUserId(),followVo);
         }
-        map.put("followingObjArr",userArr);
-        map.put("nowPage",followPage.getCurrent());
-        map.put("showNum",followPage.getSize());
         map.put("totalNum",followPage.getTotal());
         map.put("totalPage",followPage.getPages());
+        map.put("nowPage",followPage.getCurrent());
+        map.put("showNum",followPage.getSize());
+        map.put("followingObjArr",userArr);
+
+
 
         return new ResponseResult(200,"查询成功",map);
     }
 
+    //查询用户所有帖子
+    public ResponseResult getPost(String userId, int page, int size){
+//        QueryWrapper userwapper=new QueryWrapper();
+//        userwapper.eq("user_id",userId);
+        User user=userMapper.selectById(userId);
+        Page<Post> PostPage=new Page<>(page,size);
+        QueryWrapper<Post> wrapper=new QueryWrapper<>();
+        wrapper.eq("postAuthorId",userId);
+        Page<Post> postGet=postMapper.selectPage(PostPage,wrapper);
+        if (ObjectUtils.isEmpty(postGet)){
+            return new ResponseResult(409,"你没有帖子");
+        }
+        List<Post> list=postGet.getRecords();
+        PostVO postVO[]=new PostVO[list.size()];
+        Map<String, Object> map = new HashMap<>(16);
+        for (int i = 0; i < list.size(); i++) {
+            Post post= list.get(i);
+            PostVO postVO1=PostVO.builder()
+                    .postId(post.getPostId())
+                    .postTitle(post.getPostTitle())
+                    .authorName(post.getPostAuthorName())
+                    .avatar(user.getAvatar())
+                    .postTime(post.getPostTime())
+                    .lastModifyTime(post.getPostModifyTime())
+                    .viewNum(post.getPostView())
+                    .isEssPost(post.getIsEssence())
+                    .isHotPost(post.getIsHot())
+                    .relatedTagName(post.getPostTagName())
+                    .postBrief(post.getPostBrief())
+                    .build();
+            postVO[i]=postVO1;
+        }
+        map.put("totalNum",postGet.getTotal());
+        map.put("totalPage",postGet.getPages());
+        map.put("nowPage",postGet.getCurrent());
+        map.put("showNum",postGet.getSize());
+        map.put("postArr",postVO);
+        return new ResponseResult(200,"查询成功",map);
+
+    }
+
     public ResponseResult<?> collect(String userId, String postId) {
         QueryWrapper<UserCollection> wrapper = new QueryWrapper<>();
-        wrapper.eq("userId", userId).eq("postId", postId);
+        wrapper.eq("user_id", userId).eq("post_id", postId);
         UserCollection userCollection = collectionMapper.selectOne(wrapper);
         if (!ObjectUtils.isEmpty(userCollection)) {
             collectionMapper.delete(wrapper);
@@ -200,7 +246,7 @@ public class UserService {
 
     public ResponseResult<?> getCollection(String userId, int nowPage, int pageSize) {
         QueryWrapper<UserCollection> userCollectionQueryWrapper = new QueryWrapper<>();
-        userCollectionQueryWrapper.eq("userId", userId);
+        userCollectionQueryWrapper.eq("user_id", userId);
         List<UserCollection> userCollections = collectionMapper.selectList(userCollectionQueryWrapper);
         List<SearchPostVO> searchPostVOS = new ArrayList<>();
         for (UserCollection userCollection : userCollections) {
@@ -243,4 +289,5 @@ public class UserService {
                 .build();
         return new ResponseResult<>(200, "查询成功！", collectionVO);
     }
+
 }
