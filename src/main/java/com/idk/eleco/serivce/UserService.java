@@ -227,23 +227,6 @@ public class UserService {
 
     }
 
-    public ResponseResult<?> collect(String userId, String postId) {
-        QueryWrapper<UserCollection> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", userId).eq("post_id", postId);
-        UserCollection userCollection = collectionMapper.selectOne(wrapper);
-        if (!ObjectUtils.isEmpty(userCollection)) {
-            collectionMapper.delete(wrapper);
-            return new ResponseResult<>(200, "删除成功！");
-        } else {
-            UserCollection newUserCollection = UserCollection.builder()
-                    .userId(userId)
-                    .postId(postId)
-                    .build();
-            collectionMapper.insert(newUserCollection);
-            return new ResponseResult<>(200, "收藏成功！");
-        }
-    }
-
     public ResponseResult<?> getCollection(String userId, int nowPage, int pageSize) {
         QueryWrapper<UserCollection> userCollectionQueryWrapper = new QueryWrapper<>();
         userCollectionQueryWrapper.eq("user_id", userId);

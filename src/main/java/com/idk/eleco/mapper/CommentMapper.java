@@ -14,10 +14,10 @@ import java.util.List;
 public interface CommentMapper extends BaseMapper<Comment> {
 
 
-    @Select("select * from comment where commentPostId = commentPostId limit #{pageBegin}, #{pageSize}")
+    @Select("select * from comment where commentPostId = 'commentPostId' limit #{pageBegin}, #{pageSize}")
     List<Comment> findData(@Param("pageBegin") Integer pageBegin, @Param("pageSize") Integer pageSize ,@Param("commentPostId") String commentPostId);
 
-    @Select("select count(*) from comment where commentPostId = commentPostId")
+    @Select("select count(*) from comment where commentPostId = 'commentPostId'")
     int findSize(String postTitle);
 
 

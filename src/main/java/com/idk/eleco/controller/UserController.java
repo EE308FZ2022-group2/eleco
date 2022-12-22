@@ -77,21 +77,11 @@ public class UserController {
         return userService.getPost(userId,page,PageSize);
     }
 
-    @ApiOperation("收藏帖子")
-    @RequestMapping(value = "/collect", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseResult<?> collect(@RequestParam("userId") String userId,
-                                  @RequestParam("postId") String postId,
-                                  HttpServletRequest request) {
-        return userService.collect(userId, postId);
-    }
-
     @ApiOperation("获取收藏的帖子")
     @RequestMapping(value = "/collection", method = RequestMethod.GET)
     @ResponseBody
     public ResponseResult<?> getCollection(@RequestParam("userId") String userId,
-                                        @RequestParam(value = "needPage", defaultValue = "1") int nowPage,
-                                        HttpServletRequest request) {
+                                        @RequestParam(value = "needPage", defaultValue = "1") int nowPage) {
         return userService.getCollection(userId, nowPage, PageSize);
     }
 

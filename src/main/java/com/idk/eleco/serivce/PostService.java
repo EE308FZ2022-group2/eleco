@@ -2,14 +2,8 @@ package com.idk.eleco.serivce;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.idk.eleco.mapper.*;
-import com.idk.eleco.model.Vo.CommentVO;
-import com.idk.eleco.model.Vo.RecommendPostVO;
-import com.idk.eleco.model.Vo.SearchPostVO;
-import com.idk.eleco.model.Vo.TagVO;
-import com.idk.eleco.model.entity.Comment;
-import com.idk.eleco.model.entity.Post;
-import com.idk.eleco.model.entity.Tag;
-import com.idk.eleco.model.entity.User;
+import com.idk.eleco.model.Vo.*;
+import com.idk.eleco.model.entity.*;
 import com.idk.eleco.util.ResponseResult;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -241,6 +235,58 @@ public class PostService {
                 .build();
 
         return new ResponseResult(200, "查询成功", postObj);
+    }
+
+    public ResponseResult<?> collect(String userId, String postId) {
+        QueryWrapper<UserCollection> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userId).eq("post_id", postId);
+        UserCollection userCollection = collectionMapper.selectOne(wrapper);
+        if (!ObjectUtils.isEmpty(userCollection)) {
+            return new ResponseResult<>(500, "收藏已存在");
+        } else {
+            UserCollection newUserCollection = UserCollection.builder()
+                    .userId(userId)
+                    .postId(postId)
+                    .build();
+            collectionMapper.insert(newUserCollection);
+
+            QueryWrapper<Post> wrapper1 = new QueryWrapper<>();
+            wrapper.eq("postId", postId);
+            Post post = postMapper.selectOne(wrapper1);
+            QueryWrapper<User> wrapper2 = new QueryWrapper<>();
+            wrapper.eq("user_Id", userId);
+            User user = userMapper.selectOne(wrapper2);
+
+
+            CollectPostVO collectPostVO = CollectPostVO.builder()
+                    .postId(post.getPostId())
+                    .isEssPost(post.getIsEssence())
+                    .isHotPost(post.getIsHot())
+                    .postTime(post.getPostTime())
+                    .postTitle(post.getPostTitle())
+                    .authorName(post.getPostAuthorName())
+                    .lastModifyTime(post.getPostModifyTime())
+                    .relatedTagName(post.getPostTagName())
+                    .viewNum(post.getPostView())
+                    .postContent(post.getPostContentHtml())
+                    .authorId(user.getUserId())
+                    .avatar(user.getAvatar())
+                    .build();
+
+            return new ResponseResult<>(200, "收藏成功！",collectPostVO);
+        }
+    }
+
+    public ResponseResult<?> cancelcollect(String userId, String postId) {
+        QueryWrapper<UserCollection> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userId).eq("post_id", postId);
+        UserCollection userCollection = collectionMapper.selectOne(wrapper);
+        if (!ObjectUtils.isEmpty(userCollection)) {
+            collectionMapper.delete(wrapper);
+            return new ResponseResult<>(200, "删除成功！");
+        } else {
+            return new ResponseResult<>(500, "不存在此收藏");
+        }
     }
 
     public ResponseResult comment(String commentPostId, Integer page, Integer size) {
