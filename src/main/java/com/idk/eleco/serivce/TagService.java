@@ -3,9 +3,12 @@ package com.idk.eleco.serivce;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.idk.eleco.mapper.PostMapper;
 import com.idk.eleco.mapper.TagMapper;
+import com.idk.eleco.mapper.UserMapper;
+import com.idk.eleco.model.Vo.GetTagPostVO;
 import com.idk.eleco.model.Vo.PostTagVO;
 import com.idk.eleco.model.Vo.TagVO;
 import com.idk.eleco.model.entity.Tag;
+import com.idk.eleco.model.entity.User;
 import com.idk.eleco.util.ResponseResult;
 import com.idk.eleco.model.entity.Post;
 import org.springframework.stereotype.Repository;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,6 +30,9 @@ public class TagService {
 
     @Resource
     PostMapper postMapper;
+
+    @Resource
+    UserMapper userMapper;
 
     public ResponseResult<?> getTag(String tagId) {
         QueryWrapper<Tag> wrapper = new QueryWrapper<>();
@@ -55,11 +62,25 @@ public class TagService {
         if (posts.size() == 0) {
             return new ResponseResult<>(200, "该板块暂无帖子");
         } else {
-            PostTagVO postTagVO = PostTagVO.builder()
+            List<PostTagVO> tagPostVOS = new ArrayList<>();
+            for (Post post : posts) {
+                QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+                userQueryWrapper.eq("user_id", post.getPostAuthorId());
+                User user = userMapper.selectOne(userQueryWrapper);
+                if (ObjectUtils.isEmpty(user)) {
+                    return new ResponseResult<>(409, "用户不存在");
+                }
+                PostTagVO postTagVO = PostTagVO.builder()
+                        .post(post)
+                        .Avatar(user.getAvatar())
+                        .build();
+                tagPostVOS.add(postTagVO);
+            }
+            GetTagPostVO getTagPostVO = GetTagPostVO.builder()
                     .showNum(posts.size())
-                    .resultArrList(posts)
+                    .resultArrList(tagPostVOS)
                     .build();
-            return new ResponseResult<>(200, "获取成功", postTagVO);
+            return new ResponseResult<>(200, "获取成功", getTagPostVO);
         }
     }
 
