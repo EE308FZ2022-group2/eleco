@@ -28,7 +28,7 @@ public class CommentController {
                                      @RequestParam("postComment") String postComment,
                                      @RequestParam("commentFlour") int commentFlour,
                                      @RequestParam(value = "quoteFlour", defaultValue = "0") int quoteFlour,
-                                     @RequestParam(value = "quoteCommentId", defaultValue = "") String quoteCommentId) {
+                                     @RequestParam(value = "quoteCommentId", required = false) String quoteCommentId) {
         return commentService.comment(postId, userId, postComment, commentFlour, quoteFlour, quoteCommentId);
     }
 

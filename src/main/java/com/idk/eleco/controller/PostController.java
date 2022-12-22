@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 @RequestMapping("/post")
 @Api("帖子功能")
 public class PostController {
+    static Integer PageSize=7;
     @Resource
     PostService postService;
 
@@ -57,9 +58,8 @@ public class PostController {
     @RequestMapping(value = "/comment", method = RequestMethod.GET)
     @ResponseBody
     public ResponseResult comment(@RequestParam("postId") String postId,
-                               @RequestParam("nowPage") Integer nowPage,
-                               @RequestParam("size") Integer size) {
-        return postService.comment(postId,nowPage,size);
+                               @RequestParam("nowPage") Integer nowPage) {
+        return postService.comment(postId,nowPage,PageSize);
     }
 
     @ApiOperation("更新帖子")
