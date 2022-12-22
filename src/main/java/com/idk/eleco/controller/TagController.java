@@ -25,16 +25,14 @@ public class TagController {
     @ApiOperation("获取子版块")
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseResult<?> getTag(@RequestParam("tagId") String tagId,
-                                    HttpServletRequest request) {
+    public ResponseResult<?> getTag(@RequestParam("tagId") String tagId) {
         return tagService.getTag(tagId);
     }
 
     @ApiOperation("获取子版块标签下的帖子")
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseResult<?> getPost(@RequestParam("tagId") String tagId,
-                                     HttpServletRequest request) {
+    public ResponseResult<?> getPost(@RequestParam("tagId") String tagId) {
         return tagService.getPost(tagId);
     }
 

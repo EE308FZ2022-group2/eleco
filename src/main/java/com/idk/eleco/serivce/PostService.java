@@ -217,21 +217,22 @@ public class PostService {
         QueryWrapper<Post> wrapper = new QueryWrapper<>();
         wrapper.eq("postId", PostId);
         Post post = postMapper.selectOne(wrapper);
+        QueryWrapper<User> wrapper2 = new QueryWrapper<>();
+        wrapper.eq("user_Id", post.getPostAuthorId());
+        User user = userMapper.selectOne(wrapper2);
 
-
-        RecommendPostVO postObj = RecommendPostVO.builder()
+        CollectPostVO postObj = CollectPostVO.builder()
                 .postId(post.getPostId())
-                .isEssPost(post.getIsEssence())
-                .isHotPost(post.getIsHot())
-                .postBrief(post.getPostBrief())
-                .postTime(post.getPostTime())
                 .postTitle(post.getPostTitle())
                 .authorName(post.getPostAuthorName())
+                .avatar(user.getAvatar())
+                .postTime(post.getPostTime())
                 .lastModifyTime(post.getPostModifyTime())
-                .relatedTagName(post.getPostTagName())
                 .viewNum(post.getPostView())
-                .postImgUrl(post.getImgUrlArr().split(" "))
-                .relatedTagId(post.getPostTagId())
+                .isEssPost(post.getIsEssence())
+                .isHotPost(post.getIsHot())
+                .relatedTagName(post.getPostTagName())
+                .postContent(post.getPostContentHtml())
                 .build();
 
         return new ResponseResult(200, "查询成功", postObj);
