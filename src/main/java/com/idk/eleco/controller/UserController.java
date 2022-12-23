@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -78,12 +79,25 @@ public class UserController {
     }
 
     @ApiOperation("获取收藏的帖子")
+    @RequestMapping(value = "/upload", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseResult<?> UploadImg(@RequestParam("file") MultipartFile file)  {
+        String uid = "69725009da0618599d1292a14cc61198";
+        String token = "e0356b167e3a0088501158ecad2acd1c";
+        return null;
+    }
+
+    @ApiOperation("获取收藏的帖子")
     @RequestMapping(value = "/collection", method = RequestMethod.GET)
     @ResponseBody
     public ResponseResult<?> getCollection(@RequestParam("userId") String userId,
                                         @RequestParam(value = "needPage", defaultValue = "1") int nowPage) {
         return userService.getCollection(userId, nowPage, PageSize);
     }
+
+
+
+
 
 
 

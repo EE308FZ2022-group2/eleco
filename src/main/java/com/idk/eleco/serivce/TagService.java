@@ -71,7 +71,22 @@ public class TagService {
                     return new ResponseResult<>(409, "用户不存在");
                 }
                 PostTagVO postTagVO = PostTagVO.builder()
-                        .post(post)
+                        .postId(post.getPostId())
+                        .postTitle(post.getPostTitle())
+                        .postTagId(post.getPostTagId())
+                        .postTagName(post.getPostTagName())
+                        .postBrief(post.getPostBrief())
+                        .postContentHtml(post.getPostContentHtml())
+                        .postContentMark(post.getPostContentMark())
+                        .imgUrlArr(post.getImgUrlArr())
+                        .postTime(post.getPostTime())
+                        .postCollection(post.getPostCollection())
+                        .postModifyTime(post.getPostModifyTime())
+                        .isEssence(post.getIsEssence())
+                        .isHot(post.getIsHot())
+                        .isTop(post.getIsTop())
+                        .postAuthorId(post.getPostAuthorId())
+                        .postAuthorName(post.getPostAuthorName())
                         .Avatar(user.getAvatar())
                         .build();
                 tagPostVOS.add(postTagVO);
