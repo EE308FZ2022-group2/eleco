@@ -1,7 +1,9 @@
 package com.idk.eleco.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.idk.eleco.model.entity.User;
+import com.idk.eleco.serivce.FileService;
 import com.idk.eleco.serivce.UserService;
 import com.idk.eleco.util.ResponseResult;
 import io.swagger.annotations.Api;
@@ -78,13 +80,16 @@ public class UserController {
         return userService.getPost(userId,page,PageSize);
     }
 
-    @ApiOperation("获取收藏的帖子")
-    @RequestMapping(value = "/upload", method = RequestMethod.GET)
+    @ApiOperation("上传图片")
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public ResponseResult<?> UploadImg(@RequestParam("file") MultipartFile file)  {
-        String uid = "69725009da0618599d1292a14cc61198";
-        String token = "e0356b167e3a0088501158ecad2acd1c";
-        return null;
+//        String uid = "69725009da0618599d1292a14cc61198";
+//        String token = "e0356b167e3a0088501158ecad2acd1c";
+        String url="https://tuchuangs.com/api/v2/upload";
+        String result= FileService.sendHttpDataFile(url,file);
+        JSONObject object = JSONObject.parseObject(result);
+        return new ResponseResult<>(200,"上传成功",object);
     }
 
     @ApiOperation("获取收藏的帖子")
