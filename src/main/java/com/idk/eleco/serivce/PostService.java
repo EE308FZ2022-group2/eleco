@@ -217,9 +217,9 @@ public class PostService {
         QueryWrapper<Post> wrapper = new QueryWrapper<>();
         wrapper.eq("postId", PostId);
         Post post = postMapper.selectOne(wrapper);
-        QueryWrapper<User> wrapper2 = new QueryWrapper<>();
-        wrapper.eq("user_Id", post.getPostAuthorId());
-        User user = userMapper.selectOne(wrapper2);
+//        QueryWrapper<User> wrapper2 = new QueryWrapper<>();
+//        wrapper.eq("user_Id", post.getPostAuthorId());
+        User user = userMapper.selectById(post.getPostAuthorId());
 
         CollectPostVO postObj = CollectPostVO.builder()
                 .postId(post.getPostId())
