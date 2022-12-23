@@ -219,8 +219,7 @@ public class PostService {
         Post post = postMapper.selectOne(wrapper);
         post.setPostView(post.getPostView() + 1);
         postMapper.update(post,wrapper);
-//        QueryWrapper<User> wrapper2 = new QueryWrapper<>();
-//        wrapper.eq("user_Id", post.getPostAuthorId());
+
         User user = userMapper.selectById(post.getPostAuthorId());
 
         CollectPostVO postObj = CollectPostVO.builder()
