@@ -217,6 +217,8 @@ public class PostService {
         QueryWrapper<Post> wrapper = new QueryWrapper<>();
         wrapper.eq("postId", PostId);
         Post post = postMapper.selectOne(wrapper);
+        post.setPostView(post.getPostView() + 1);
+        postMapper.update(post,wrapper);
         QueryWrapper<User> wrapper2 = new QueryWrapper<>();
         wrapper.eq("user_Id", post.getPostAuthorId());
         User user = userMapper.selectOne(wrapper2);
@@ -274,7 +276,7 @@ public class PostService {
                     .avatar(user.getAvatar())
                     .build();
 
-            return new ResponseResult<>(200, "收藏成功！",collectPostVO);
+            return new ResponseResult<>(200, "收藏成功！", collectPostVO);
         }
     }
 
